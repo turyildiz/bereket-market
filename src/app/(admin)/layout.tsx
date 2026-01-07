@@ -1,4 +1,4 @@
-import { currentUser } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { isAdmin } from '@/lib/admin';
 import { Store } from 'lucide-react';
@@ -8,16 +8,15 @@ export default async function AdminLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const user = await currentUser();
+    const { sessionClaims } = await auth();
 
-    if (!user) {
-        redirect('/sign-in');
-    }
+    // The type assertion is needed because Clerk types might not infer the custom claims immediately without restart
+    // or sometimes require explicit casting if the global declaration isn't picked up by the build process yet.
+    // However, thanks to globals.d.ts, sessionClaims.metadata should be typed if everything works.
+    // We'll pass the metadata object safely.
 
-    const email = user.emailAddresses[0]?.emailAddress;
-
-    if (!isAdmin(email)) {
-        // Redirect non-admins to home
+    // Check if metadata exists and has admin role
+    if (!isAdmin(sessionClaims?.metadata)) {
         redirect('/');
     }
 
@@ -32,7 +31,7 @@ export default async function AdminLayout({
                         <span className="font-display font-semibold">Bereket Admin</span>
                     </div>
                     <div className="text-sm text-muted-foreground">
-                        {email}
+                        Admin
                     </div>
                 </div>
             </header>

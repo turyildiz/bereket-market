@@ -1,9 +1,11 @@
-export const ADMIN_EMAILS = [
-    'admin@bereket.market',
-    'turgay@berlin.com'
-];
 
-export function isAdmin(userEmail?: string | null): boolean {
-    if (!userEmail) return false;
-    return ADMIN_EMAILS.includes(userEmail);
+
+/**
+ * Checks if a user has the admin role based on their metadata.
+ * 
+ * @param metadata The user's public metadata (from session claims or user object)
+ * @returns true if the user has the 'admin' role
+ */
+export function isAdmin(metadata?: { role?: string }): boolean {
+    return metadata?.role === 'admin';
 }
