@@ -1,65 +1,157 @@
-import Image from "next/image";
+import { Store, Camera, Sparkles, Globe, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Background decorations */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        {/* Gradient orbs */}
+        <div className="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-primary/20 blur-[100px]" />
+        <div className="absolute -right-40 top-1/3 h-96 w-96 rounded-full bg-amber-400/15 blur-[120px]" />
+        <div className="absolute -bottom-40 left-1/3 h-80 w-80 rounded-full bg-primary/15 blur-[100px]" />
+
+        {/* Geometric pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+      </div>
+
+      {/* Main content */}
+      <div className="relative">
+        {/* Header */}
+        <header className="container mx-auto px-6 py-6">
+          <nav className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/25">
+                <Store className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <span className="font-display text-xl font-bold tracking-tight">Bereket Market</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" className="hidden sm:inline-flex">
+                Für Händler
+              </Button>
+              <Button className="shadow-lg shadow-primary/25">
+                Anmelden
+              </Button>
+            </div>
+          </nav>
+        </header>
+
+        {/* Hero section */}
+        <main className="container mx-auto px-6">
+          <div className="flex min-h-[calc(100vh-100px)] flex-col items-center justify-center py-20 text-center">
+            {/* Badge */}
+            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-medium text-primary backdrop-blur-sm">
+              <Sparkles className="h-4 w-4" />
+              <span>KI-gestützte Angebotserkennung</span>
+            </div>
+
+            {/* Headline */}
+            <h1 className="font-display text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+              <span className="block">Ihr lokaler Marktplatz</span>
+              <span className="mt-2 block text-gradient">für orientalische Spezialitäten</span>
+            </h1>
+
+            {/* Subheadline */}
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
+              Händler laden Fotos hoch, unsere KI erkennt automatisch die Angebote.
+              Kunden entdecken die besten Deals in ihrer Nähe.
+            </p>
+
+            {/* Coming Soon Badge */}
+            <div className="mt-12 flex flex-col items-center gap-6">
+              <div className="relative">
+                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary via-amber-400 to-primary opacity-20 blur-lg" />
+                <div className="relative rounded-2xl border border-border bg-card px-8 py-6 shadow-2xl">
+                  <span className="font-display text-2xl font-bold tracking-wide text-foreground sm:text-3xl">
+                    Coming Soon
+                  </span>
+                </div>
+              </div>
+
+              {/* Email signup placeholder */}
+              <div className="flex w-full max-w-md flex-col gap-3 sm:flex-row">
+                <input
+                  type="email"
+                  placeholder="Ihre E-Mail-Adresse"
+                  className="flex-1 rounded-xl border border-border bg-card px-4 py-3 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+                <Button className="gap-2 shadow-lg shadow-primary/25">
+                  Benachrichtigen
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Seien Sie die Ersten, die erfahren, wenn wir starten!
+              </p>
+            </div>
+
+            {/* Features grid */}
+            <div className="mt-24 grid w-full max-w-4xl gap-6 sm:grid-cols-3">
+              <FeatureCard
+                icon={<Camera className="h-6 w-6" />}
+                title="Foto hochladen"
+                description="Laden Sie einfach ein Foto Ihrer Angebote hoch"
+              />
+              <FeatureCard
+                icon={<Sparkles className="h-6 w-6" />}
+                title="KI-Erkennung"
+                description="Unsere KI erkennt und kategorisiert automatisch"
+              />
+              <FeatureCard
+                icon={<Globe className="h-6 w-6" />}
+                title="Lokal entdecken"
+                description="Kunden finden Sie in ihrer Nähe"
+              />
+            </div>
+          </div>
+        </main>
+
+        {/* Footer */}
+        <footer className="container mx-auto border-t border-border/50 px-6 py-8">
+          <div className="flex flex-col items-center justify-between gap-4 text-sm text-muted-foreground sm:flex-row">
+            <div className="flex items-center gap-2">
+              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-primary/10">
+                <Store className="h-3 w-3 text-primary" />
+              </div>
+              <span>© 2026 Bereket Market</span>
+            </div>
+            <div className="flex gap-6">
+              <a href="#" className="transition-colors hover:text-foreground">Impressum</a>
+              <a href="#" className="transition-colors hover:text-foreground">Datenschutz</a>
+              <a href="#" className="transition-colors hover:text-foreground">Kontakt</a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+function FeatureCard({
+  icon,
+  title,
+  description
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="group relative overflow-hidden rounded-2xl border border-border/50 bg-card/50 p-6 backdrop-blur-sm transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
+      <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-primary/5 transition-transform group-hover:scale-150" />
+      <div className="relative">
+        <div className="mb-4 inline-flex rounded-xl bg-primary/10 p-3 text-primary">
+          {icon}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        <h3 className="mb-2 font-display text-lg font-semibold">{title}</h3>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
     </div>
   );
 }
