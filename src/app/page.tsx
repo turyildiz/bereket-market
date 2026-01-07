@@ -1,4 +1,5 @@
 import { Store, Camera, Sparkles, Globe, ChevronRight } from 'lucide-react';
+import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 
 export default function Home() {
@@ -32,12 +33,34 @@ export default function Home() {
               <span className="font-display text-xl font-bold tracking-tight">Bereket Market</span>
             </div>
             <div className="flex items-center gap-4">
-              <Button variant="ghost" className="hidden sm:inline-flex">
-                Für Händler
-              </Button>
-              <Button className="shadow-lg shadow-primary/25">
-                Anmelden
-              </Button>
+              {/* Show different content based on auth state */}
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <Button variant="ghost" className="hidden sm:inline-flex">
+                    Anmelden
+                  </Button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <Button className="shadow-lg shadow-primary/25">
+                    Registrieren
+                  </Button>
+                </SignUpButton>
+              </SignedOut>
+              <SignedIn>
+                <a href="/dashboard">
+                  <Button variant="ghost" className="hidden sm:inline-flex">
+                    Dashboard
+                  </Button>
+                </a>
+                <UserButton
+                  afterSignOutUrl="/"
+                  appearance={{
+                    elements: {
+                      avatarBox: "h-10 w-10"
+                    }
+                  }}
+                />
+              </SignedIn>
             </div>
           </nav>
         </header>
@@ -74,17 +97,29 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Email signup placeholder */}
-              <div className="flex w-full max-w-md flex-col gap-3 sm:flex-row">
-                <input
-                  type="email"
-                  placeholder="Ihre E-Mail-Adresse"
-                  className="flex-1 rounded-xl border border-border bg-card px-4 py-3 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                />
-                <Button className="gap-2 shadow-lg shadow-primary/25">
-                  Benachrichtigen
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
+              {/* Auth buttons for mobile/CTA */}
+              <div className="flex w-full max-w-md flex-col gap-3 sm:flex-row sm:justify-center">
+                <SignedOut>
+                  <SignUpButton mode="modal">
+                    <Button size="lg" className="gap-2 shadow-lg shadow-primary/25">
+                      Jetzt registrieren
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </SignUpButton>
+                  <SignInButton mode="modal">
+                    <Button size="lg" variant="outline">
+                      Anmelden
+                    </Button>
+                  </SignInButton>
+                </SignedOut>
+                <SignedIn>
+                  <a href="/dashboard">
+                    <Button size="lg" className="gap-2 shadow-lg shadow-primary/25">
+                      Zum Dashboard
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </a>
+                </SignedIn>
               </div>
               <p className="text-sm text-muted-foreground">
                 Seien Sie die Ersten, die erfahren, wenn wir starten!

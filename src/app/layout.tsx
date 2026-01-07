@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Outfit } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 const inter = Inter({
@@ -62,18 +63,25 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+// Force dynamic rendering to ensure Clerk has access to environment variables
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="de" suppressHydrationWarning>
-      <body
-        className={`${inter.variable} ${outfit.variable} font-sans antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+    >
+      <html lang="de" suppressHydrationWarning>
+        <body
+          className={`${inter.variable} ${outfit.variable} font-sans antialiased`}
+        >
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
