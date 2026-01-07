@@ -36,12 +36,12 @@ export default function Home() {
               {/* Show different content based on auth state */}
               <SignedOut>
                 <SignInButton mode="modal">
-                  <Button variant="ghost" className="hidden sm:inline-flex">
+                  <Button variant="ghost" className="hidden cursor-pointer sm:inline-flex">
                     Anmelden
                   </Button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <Button className="shadow-lg shadow-primary/25">
+                  <Button className="cursor-pointer shadow-lg shadow-primary/25">
                     Registrieren
                   </Button>
                 </SignUpButton>
@@ -101,13 +101,13 @@ export default function Home() {
               <div className="flex w-full max-w-md flex-col gap-3 sm:flex-row sm:justify-center">
                 <SignedOut>
                   <SignUpButton mode="modal">
-                    <Button size="lg" className="gap-2 shadow-lg shadow-primary/25">
+                    <Button size="lg" className="cursor-pointer gap-2 shadow-lg shadow-primary/25">
                       Jetzt registrieren
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   </SignUpButton>
                   <SignInButton mode="modal">
-                    <Button size="lg" variant="outline">
+                    <Button size="lg" variant="outline" className="cursor-pointer">
                       Anmelden
                     </Button>
                   </SignInButton>
