@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Outfit } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { deDE } from "@clerk/localizations";
 import "./globals.css";
 
 const inter = Inter({
@@ -74,6 +75,20 @@ export default function RootLayout({
   return (
     <ClerkProvider
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      localization={deDE}
+      appearance={{
+        layout: {
+          socialButtonsPlacement: "bottom",
+          socialButtonsVariant: "iconButton",
+        },
+        elements: {
+          // Center the modal perfectly
+          modalBackdrop: "items-center justify-center",
+          modalContent: "mx-auto my-auto",
+          card: "shadow-xl",
+          rootBox: "mx-auto",
+        },
+      }}
     >
       <html lang="de" suppressHydrationWarning>
         <body
