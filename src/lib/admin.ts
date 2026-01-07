@@ -1,6 +1,6 @@
 export const ADMIN_EMAILS = [
-    'admin@bereket.market', // Placeholder - add your email here
-    // 'your.email@example.com' 
+    'admin@bereket.market',
+    'turgay@berlin.com'
 ];
 
 export function isAdmin(userEmail?: string | null): boolean {
