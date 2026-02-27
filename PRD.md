@@ -1,6 +1,6 @@
 # Product Requirements Document: Bereket Market
 
-**Version**: 1.0
+**Version**: 1.1
 **Date**: 2026-02-27
 **Status**: Draft
 
@@ -10,21 +10,21 @@
 
 ### 1.1 Vision
 
-Bereket Market is a web platform that enables Turkish and Middle Eastern supermarkets to digitally advertise their latest product offers. Supermarket staff send photos of offers via WhatsApp; the platform automatically processes them with AI, publishes them online, and allows customers to browse deals by store or location.
+Bereket Market is a web platform that enables Turkish and Middle Eastern supermarkets to digitally advertise their latest product offers. Shop owners publish offers through a web dashboard; customers can browse current deals by store or location without needing an account.
 
 ### 1.2 Problem Statement
 
-Turkish supermarkets in German-speaking markets (and similar diaspora communities) currently rely on paper flyers, WhatsApp group broadcasts, and word-of-mouth to communicate weekly deals. This is:
+Turkish supermarkets in German-speaking markets (and similar diaspora communities) currently rely on paper flyers and word-of-mouth to communicate weekly deals. This is:
 
 - **Fragmented**: No single place for customers to discover deals across multiple stores.
 - **Labour-intensive**: Store owners manually create and distribute flyers.
-- **Ephemeral**: Offers disappear from WhatsApp chats and have no searchable archive.
-- **Unscalable**: Each new branch requires a separate distribution channel.
+- **Ephemeral**: Printed offers have no searchable, persistent archive.
+- **Unscalable**: Each new branch requires its own separate distribution effort.
 
 ### 1.3 Solution
 
 A two-sided platform:
-- **For supermarkets**: A dead-simple way to post offers — send a WhatsApp photo, and it appears online immediately, enriched with AI-extracted product info.
+- **For supermarkets**: A dashboard to publish and manage offers — upload a photo, fill in the details, and it goes live immediately.
 - **For customers**: A browsable, searchable catalogue of current offers across multiple supermarket chains and branches.
 
 ### 1.4 Target Markets
@@ -39,34 +39,33 @@ A two-sided platform:
 | Role | Description | Key Permissions |
 |---|---|---|
 | **Admin** | Platform operator (Bereket team) | Full access; manages brands, branches, users, moderation |
-| **Shop Owner** | Supermarket chain owner/manager | Manages their brand, branches, and authorized senders |
-| **Branch Staff** | Store employee at a specific branch | Submits offers via WhatsApp (no web login required) |
-| **Customer** | End-user browsing offers | Browses, searches, and saves offers (no login required) |
+| **Shop Owner** | Supermarket chain owner/manager | Manages their brand, branches, and publishes offers via dashboard |
+| **Customer** | End-user browsing offers | Browses and searches offers (no login required) |
 
 ---
 
 ## 3. Core Features
 
-### 3.1 WhatsApp Offer Ingestion (P0)
+### 3.1 Web-Based Offer Publishing (P0)
 
-The primary input mechanism for offers. Store staff photograph a product or price tag and send it to a dedicated WhatsApp number.
+Shop owners publish offers directly through the dashboard. No third-party messaging integration is required.
 
 **Requirements:**
-- A WhatsApp Business API webhook receives incoming messages.
-- The system verifies the sender's phone number against the `authorizedSenders` table.
-- If authorized, the image is stored in Cloudflare R2 and queued for AI processing.
-- If unauthorized, the system sends an auto-reply explaining the sender is not registered.
-- Supports photos, short videos (optional), and text-only offers.
-- Handles multiple offers in a single message thread.
+- Shop owner uploads an image (JPEG/PNG/WebP, max 10 MB) via a web form.
+- Required fields: product name, price, unit (per kg / per piece / per litre / other).
+- Optional fields: product category, offer valid-until date, free-text description.
+- Image is stored in Cloudflare R2 and served via CDN.
+- Offer goes live immediately upon submission (or after admin approval if moderation is enabled).
+- Shop owner can edit or deactivate any of their offers after publishing.
 
 **Acceptance Criteria:**
-- Authorized sender sends a photo → offer appears on the website within 60 seconds.
-- Unauthorized sender receives a polite rejection reply.
-- Images are stored reliably and served via CDN.
+- Upload → offer visible on public browse page within 10 seconds.
+- Images are served reliably from CDN with no broken links.
+- Form validates required fields before submission.
 
 ---
 
-### 3.2 AI Offer Processing (P0)
+### 3.2 AI Offer Processing (P1)
 
 After an image is received, AI enriches the raw photo with structured data.
 
@@ -128,7 +127,7 @@ Admin and shop owners manage the organisational hierarchy.
 - View and edit their own brand profile (name, logo).
 - Create, edit, and deactivate branches under their brand.
   - Branch fields: name, address, city, postal code, phone, opening hours, geo-coordinates (lat/lon).
-- Manage authorized WhatsApp senders per branch (add/remove phone numbers).
+- Manage branch staff accounts (invite/remove users who can post offers).
 
 **Acceptance Criteria:**
 - Brand CRUD works end-to-end and persists to the database.
@@ -142,16 +141,16 @@ Admin and shop owners manage the organisational hierarchy.
 Shop owners and authorised staff can review and manage offers through the web dashboard.
 
 **Requirements:**
-- Dashboard home shows summary stats: total active offers, offers this week, branches, authorized senders.
+- Dashboard home shows summary stats: total active offers, offers this week, number of branches.
 - Offer list view with status (active, expired, pending review, rejected).
-- Ability to manually edit extracted data (name, price, category) on any offer.
+- Ability to edit offer details (name, price, category, description) after publishing.
 - Ability to deactivate or delete an offer.
-- Ability to manually upload an image and create an offer directly (web upload as alternative to WhatsApp).
+- Upload an image and create a new offer directly from the dashboard.
 - Filter offers by branch and date range.
 
 **Acceptance Criteria:**
-- Shop owner can edit an offer's extracted data and changes are reflected on the public site within 5 seconds.
-- Manual web upload creates an offer indistinguishable from a WhatsApp-submitted one.
+- Shop owner can edit an offer and changes are reflected on the public site within 5 seconds.
+- Offer upload and creation flow works end-to-end without errors.
 
 ---
 
@@ -163,7 +162,7 @@ Platform-level oversight for content quality and policy compliance.
 - Moderation queue shows offers flagged by AI (low confidence or policy violation).
 - Admin can approve (publish), edit, or reject any offer.
 - Admin can view all offers across all brands, filterable by brand, branch, status, and date.
-- Admin can suspend a brand or individual authorized sender.
+- Admin can suspend a brand or individual shop owner account.
 - Basic analytics: offers created per day, AI extraction accuracy over time.
 
 **Acceptance Criteria:**
@@ -197,8 +196,7 @@ Platform-level oversight for content quality and policy compliance.
 | Database | PostgreSQL via Neon (serverless) |
 | ORM | Drizzle ORM |
 | File Storage | Cloudflare R2 (S3-compatible) |
-| AI Processing | OpenAI GPT-4o Vision (or Anthropic Claude 3.5 Sonnet) |
-| WhatsApp API | Twilio or Meta Cloud API |
+| AI Processing (P1) | OpenAI GPT-4o Vision or Anthropic Claude claude-sonnet-4-6 |
 | Deployment | Vercel (recommended) |
 
 ### 4.2 Data Model (Current Schema)
@@ -206,9 +204,10 @@ Platform-level oversight for content quality and policy compliance.
 ```
 brands          (id, name, logoUrl, createdAt)
   └── branches  (id, brandId, name, address, lat, lon, openingHours, phone, createdAt)
-        ├── authorizedSenders  (id, branchId, phoneNumber, senderName, createdAt)
-        └── offers             (id, branchId, imageUrl, originalImageUrl, description, price, isActive, createdAt)
+        └── offers  (id, branchId, imageUrl, description, price, isActive, createdAt)
 ```
+
+> Note: The `authorizedSenders` table (for WhatsApp) exists in the current schema but is no longer needed for the web-only publishing model. It should be removed in the next migration.
 
 **Required schema additions:**
 - `offers.productName` — extracted product name
@@ -224,10 +223,9 @@ brands          (id, name, logoUrl, createdAt)
 
 ### 4.3 Key Integration Points
 
-1. **WhatsApp Webhook** (`POST /api/webhook/whatsapp`): Receives incoming messages, validates sender, stores image, enqueues AI job.
-2. **AI Processing Worker** (`POST /api/process-offer`): Invokes vision model, writes extracted fields back to DB.
-3. **Image Upload** (`POST /api/upload`): Accepts multipart form data, validates, stores to R2, returns public URL.
-4. **Offers API** (`GET /api/offers`): Public endpoint for listing offers with filters and pagination.
+1. **Image Upload** (`POST /api/upload`): Accepts multipart form data from the dashboard, validates, stores to R2, returns public URL.
+2. **Offers API** (`GET /api/offers`): Public endpoint for listing offers with filters and pagination.
+3. **AI Processing Worker** (`POST /api/process-offer`, P1): Optional — invokes vision model to auto-fill product fields from an uploaded image.
 
 ---
 
@@ -235,8 +233,7 @@ brands          (id, name, logoUrl, createdAt)
 
 | Requirement | Target |
 |---|---|
-| Offer publish latency (WhatsApp → live) | < 60 seconds |
-| AI extraction accuracy (name + price) | > 85% |
+| Offer publish latency (upload → live) | < 10 seconds |
 | Page load time (mobile, 4G) | < 2 seconds |
 | Image upload size limit | 10 MB |
 | Uptime | 99.5% monthly |
@@ -262,29 +259,28 @@ brands          (id, name, logoUrl, createdAt)
 
 ### Phase 1 — Foundation (Current State → MVP)
 
-**Goal**: A working end-to-end loop: WhatsApp photo → published offer → public browse.
+**Goal**: A working end-to-end loop: shop owner uploads offer via dashboard → offer appears on the public browse page.
 
 | Feature | Priority | Status |
 |---|---|---|
 | Auth + role gating | P0 | Done |
 | Brand CRUD (admin) | P0 | Done |
 | Branch CRUD (admin + shop owner) | P0 | Not started |
-| Authorized sender management | P0 | Not started |
 | Image upload to R2 | P0 | Not started |
-| WhatsApp webhook | P0 | Not started |
-| AI offer extraction | P0 | Not started |
-| Public offer browse | P0 | Not started |
+| Offer creation form (dashboard) | P0 | Not started |
+| Offers API (GET + POST) | P0 | Not started |
+| Public offer browse page | P0 | Not started |
 | Offers schema migration | P0 | Not started |
+| Remove `authorizedSenders` table | P0 | Not started |
 
 ### Phase 2 — Shop Owner Dashboard
 
 **Goal**: Self-service for shop owners — no admin intervention needed for day-to-day operations.
 
 - Dashboard stats & overview
-- Manual web offer upload
 - Offer editing & deactivation
 - Branch management UI
-- Authorized sender management UI
+- Shop owner data scoping (enforce brand isolation)
 
 ### Phase 3 — Discovery & Growth
 
@@ -315,19 +311,17 @@ brands          (id, name, logoUrl, createdAt)
 | Active branches | 10 | 50 |
 | Offers published per week | 50 | 500 |
 | Monthly unique visitors | 1,000 | 10,000 |
-| AI extraction accuracy | 80% | 90% |
-| Offer publish latency (p95) | < 120s | < 45s |
+| Offer publish latency (p95) | < 15s | < 10s |
 
 ---
 
 ## 9. Open Questions
 
-1. **WhatsApp API provider**: Twilio vs. Meta Cloud API vs. a lower-cost alternative (e.g., 360dialog)?
-2. **AI provider**: OpenAI GPT-4o Vision vs. Anthropic Claude claude-sonnet-4-6 vs. Google Gemini — cost/accuracy trade-off?
-3. **Auto-publish vs. moderation-first**: Should offers go live immediately if AI confidence is high, or should all offers be held for admin review initially?
-4. **Customer accounts**: Should phase 1 include a "follow this store" feature, or is that strictly v2?
-5. **GDPR & WhatsApp numbers**: How are sender phone numbers handled, stored, and deleted on request?
-6. **Pricing model**: Free for shop owners in MVP? Freemium (free up to N offers/month)? Subscription per branch?
+1. **AI provider** (Phase 2): OpenAI GPT-4o Vision vs. Anthropic Claude claude-sonnet-4-6 vs. Google Gemini — cost/accuracy trade-off for auto-filling offer fields from images?
+2. **Auto-publish vs. moderation-first**: Should offers go live immediately, or should all offers be held for admin review initially?
+3. **Customer accounts**: Should phase 1 include a "follow this store" feature, or is that strictly v2?
+4. **Pricing model**: Free for shop owners in MVP? Freemium (free up to N offers/month)? Subscription per branch?
+5. **Offer ingestion beyond web**: Is any future messaging-based ingestion channel (Telegram bot, email) planned, or is the web dashboard the only interface long-term?
 
 ---
 
@@ -337,10 +331,10 @@ brands          (id, name, logoUrl, createdAt)
 |---|---|---|
 | Brand CRUD | Implemented (admin only) | Extend to shop owner scope |
 | Branch CRUD | Schema exists, no UI/API | Build UI + server actions |
-| Authorized sender management | Schema exists, no UI | Build UI + server actions |
+| `authorizedSenders` table | In schema, no longer needed | Remove in next Drizzle migration |
 | Image upload | Stub in `/api/upload` | Implement R2 client + upload logic |
-| WhatsApp webhook | Not started | New route + Twilio/Meta integration |
-| AI extraction | Config placeholder | Implement vision model pipeline |
+| Offer creation form (dashboard) | Not started | Build form + wire to upload + DB |
+| AI extraction (optional, P1) | Config placeholder | Implement vision model pipeline |
 | Offers API | Returns 501 | Implement GET + POST handlers |
 | Public browse page | Not started | New page + offer listing components |
 | Offer schema fields | Missing several fields | Drizzle migration |
